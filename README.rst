@@ -175,7 +175,42 @@ Endpoints
    * - ``POST /orders/{id}/cancel``
      - Cancel the order
 
-The optional header ``X-Clock: HH:MM`` sets the time of day that the service uses for the happy hour rule. Use it to test time-dependent behaviour without waiting.
+The optional header ``X-Clock: HH:MM`` sets the time of day that the service uses for the happy hour rule. Use it to test time-dependent behaviour without waiting. Without the header the service uses the current time in Turkey.
+
+Responses
+~~~~~~~~~
+
+Every response body is JSON, and an error looks like ``{"error": "the order is not open"}``. The main bodies are:
+
+- an order: ``{"id", "table", "guests", "status", "lines", "payment"}``, where each line is ``{"item_id", "name", "category", "qty", "price", "line_total"}`` and ``payment`` is null until the order is paid;
+- the bill: ``{"subtotal", "happy_hour_discount", "order_discount", "service_charge", "total"}``, all in kuruş, with total = subtotal − happy_hour_discount − order_discount + service_charge;
+- a payment: ``{"id", "status", "method", "payment_id", "amount"}``, where ``payment_id`` comes from the payment provider and is null for cash;
+- lists: ``{"items": [...]}`` from ``GET /menu`` and ``{"orders": [...]}`` from ``GET /orders``.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 12 88
+
+   * - Status
+     - When the correct service returns it
+   * - 200
+     - The request was carried out
+   * - 201
+     - ``POST /orders`` created an order
+   * - 400
+     - Invalid input: a missing field or a value of the wrong type, ``table``, ``guests`` or ``qty`` outside its range in a single request, an unknown payment method, a card payment without ``idempotency_key``, a malformed ``X-Clock`` header, an unknown ``status`` filter, a body that is not a JSON object
+   * - 401
+     - ``X-Waiter-Key`` is missing or unknown
+   * - 404
+     - Unknown order (an order opened by the other waiter counts as unknown), unknown dish, a dish that is not in the order, unknown path
+   * - 405
+     - The path exists but not with this method
+   * - 409
+     - The order is not OPEN; the line would go above Q_MAX; the order would have more than L_MAX different dishes; not enough stock; a card payment of the order is in progress
+   * - 429
+     - The kitchen is full (rule 6)
+   * - 503
+     - The payment provider did not confirm the payment (rule 7)
 
 Business rules
 ~~~~~~~~~~~~~~
@@ -192,10 +227,10 @@ The names in capitals are parameters. Their values for your group are printed on
    - during happy hour, from HH_START up to but not including HH_END, every drink line gets HH_PERCENT % off;
    - if the amount after the happy hour discount reaches DISCOUNT_THRESHOLD, the order gets DISCOUNT_PERCENT % off that amount (your card says whether the threshold itself counts);
    - if the order has at least SERVICE_GUESTS guests, a service charge of SERVICE_PERCENT % is added to the amount after discounts;
-   - every percentage is rounded half up to a whole kuruş at the step where it is applied.
+   - every percentage is rounded half up to a whole kuruş at the step where it is applied: the happy hour discount for each drink line, the order discount and the service charge once for the whole order.
 
-6. The kitchen can work on at most KITCHEN_SLOTS open orders that contain a main course. Adding a main course to one more order is refused with status 429.
-7. A card payment goes to the payment provider. If the provider does not answer within PAY_TIMEOUT_MS or answers with an error, the order stays OPEN and the service answers 503. A payment repeated with the same idempotency key must never charge the customer twice.
+6. The kitchen can work on at most KITCHEN_SLOTS open orders that contain a main course. Adding a main course to one more order is refused with status 429. An order frees its slot when it is paid or cancelled, or when its last main course is removed.
+7. A card payment goes to the payment provider. If the provider does not answer within PAY_TIMEOUT_MS or answers with an error, the order stays OPEN and the service answers 503. A payment repeated with the same idempotency key must never charge the customer twice: after a successful payment the same request returns the same payment with status 200. While a card payment of an order is in progress, the order cannot be changed, cancelled or paid again.
 8. Invalid input gets a 4xx status with a JSON error message, never a 5xx status and never a stack trace.
 
 
@@ -322,7 +357,7 @@ Use an open workload model (k6 arrival-rate executors, or a Locust load shape wi
 - ``tool``: "k6" or "locust";
 - ``p95_limit_ms``: the p95 limit printed on your variant card;
 - ``capacity_rps``: the arrival rate, in requests per second, at which the p95 response time of ``POST /orders/{id}/items`` goes above ``p95_limit_ms``;
-- ``growing_endpoint``: the endpoint whose response time grows with the number of stored orders, written as method and path, for example "GET /orders/{id}";
+- ``growing_endpoint``: the endpoint whose response time grows with the number of stored orders, written as method and path without the query string, for example "GET /orders/{id}" or "GET /orders";
 - ``leaking_endpoint``: the endpoint whose calls make the service's memory grow during a soak test, written the same way;
 - ``evidence``: paths of the result files that support each answer.
 
@@ -335,7 +370,7 @@ The mock payment provider listens on port 8081. Switch its behaviour with::
 
     curl -X POST http://localhost:8081/admin/mode -H "Content-Type: application/json" -d '{"mode": "slow", "delay_ms": 3000}'
 
-The modes are ``normal`` (answers at once), ``slow`` (waits ``delay_ms`` milliseconds), ``down`` (answers every charge with 503) and ``flaky`` (fails a share ``error_rate`` of the charges with 503). You can also stop and start the container with ``docker compose stop payments`` and ``docker compose start payments``. For each experiment, write one text file in ``chaos/`` with the steady state you expect in numbers, the hypothesis, the fault and how long it lasted, what you observed with the commands and outputs, and whether the hypothesis held.
+The modes are ``normal`` (answers at once), ``slow`` (waits ``delay_ms`` milliseconds), ``down`` (answers every charge with 503) and ``flaky`` (fails a share ``error_rate`` of the charges with 503, for example ``{"mode": "flaky", "error_rate": 0.3}``). ``GET http://localhost:8081/charges?order_id=<id>`` lists the charges the provider recorded for an order, so you can count them, and ``POST /admin/reset`` forgets every charge and goes back to normal mode. A charge repeated with the same ``Idempotency-Key`` header is recorded once. You can also stop and start the container with ``docker compose stop payments`` and ``docker compose start payments``. For each experiment, write one text file in ``chaos/`` with the steady state you expect in numbers, the hypothesis, the fault and how long it lasted, what you observed with the commands and outputs, and whether the hypothesis held.
 
 The CI workflow in the starter files runs only the unit tests. Keep it working.
 
