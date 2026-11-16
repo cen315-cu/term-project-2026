@@ -25,7 +25,7 @@ All times are Turkey time (UTC+3).
    * - Friday 20 November, 17:00
      - Group sign-up closes. One member of each group fills in the sign-up form linked on the course page. Only the instructor sees the answers. A student without a complete and correct entry counts as not having taken the project (see "Signing up").
    * - Monday 23 November
-     - Your private group repository is created with the starter files in it, and you receive an invitation by e-mail. Accept it within 48 hours. The name of the repository is your group id. The service image is published. If you have no invitation by 24 November, tell the instructor.
+     - Your private group repository is created with the starter files in it after the sign-up closes, at the latest on this day, and you receive an invitation by e-mail. Accept it within 48 hours. The repository is named after your group id, for example ``group-1-07``. The service image is published. If you have no invitation by 24 November, tell the instructor.
    * - Week of 23 November
      - Your variant card is handed out on paper in class.
    * - Sunday 29 November, 23:59
