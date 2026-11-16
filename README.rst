@@ -40,7 +40,7 @@ All times are Turkey time (UTC+3).
    * - Monday 23 November
      - The service images are published.
    * - Week of 23 November
-     - Your variant card is handed out on paper in class.
+     - Your variant card is handed out on paper in class. Bring your student ID card: each member's identity is checked against the group list.
    * - Sunday 29 November, 23:59
      - Checkpoint 1. Roles are fixed from this point on.
    * - Sunday 6 December, 23:59
@@ -90,6 +90,8 @@ Once a group exists:
 - A member added to the entry later, with the edit link, is invited to the same repository, up to five members.
 - A student who is already in a group stays in it. Another entry that lists them is ignored for that student.
 - Removing a member or moving to another group goes through the instructor.
+
+List only students who have agreed to be in your group, with their own GitHub accounts. Writing in another student's number, or a GitHub account that is not theirs, is academic misconduct. If your number was used without your consent, write to the instructor at once: you are moved to the right group and the entry is handled under the misconduct rules. When the variant cards are handed out in class, every member shows their student ID card and is checked against the group list.
 
 Each student is responsible for their own entry, so check it with the member who sends the form. A line with a student number that is not on the class list of the section, an incomplete line or a wrong username is ignored. A student who is not in a group when the sign-up closes on Friday 20 November, 17:00, counts as not having taken the project. Entries are not accepted after the deadline.
 
