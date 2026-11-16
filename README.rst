@@ -230,9 +230,6 @@ Your group repository is created with these starter files. Keep this layout, bec
    * - ``bugs/bugs.csv``
      - One row per fault you found
      - all
-   * - ``docs/report.pdf``
-     - Short report, at most six pages
-     - all
 
 Starting the service
 ~~~~~~~~~~~~~~~~~~~~
@@ -428,7 +425,7 @@ Academic integrity
 AI tools are not allowed
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-You may not use AI tools for any part of this project. This covers chat assistants (ChatGPT, Claude, Gemini, Copilot Chat, DeepSeek and others), code completion in the editor (GitHub Copilot, Cursor, Codeium, Tabnine, the built-in AI completion of your IDE and similar), and coding agents that run commands or edit files for you. It applies to code, tests, test data, scripts, configuration, bug reports, the threat model and the report. Turn off AI completion in your editor before you work on your repository.
+You may not use AI tools for any part of this project. This covers chat assistants (ChatGPT, Claude, Gemini, Copilot Chat, DeepSeek and others), code completion in the editor (GitHub Copilot, Cursor, Codeium, Tabnine, the built-in AI completion of your IDE and similar), and coding agents that run commands or edit files for you. It applies to code, tests, test data, scripts, configuration, bug reports, the test plan and the threat model. Turn off AI completion in your editor before you work on your repository.
 
 The point of the project is that you design the tests, write the code and find the faults yourselves. The exam is built from your own repository. A student who cannot explain the tests and code committed from their account will lose most of the exam half of the grade, whoever or whatever wrote them.
 
