@@ -4,11 +4,22 @@ CEN315 Term Project 2026: Testing the Bistro Order Service
 CEN315 Introduction to Test Engineering, Çukurova University, Fall 2026.
 Instructor: Dr. Yunus Emre Çoğurcu.
 
-In this project your group tests a restaurant order service that you did not write and cannot see the source of. The service contains faults. Your job is to find them with the techniques from the course, prove each one with an automated test, measure how the service behaves under load, and build one small module of your own with test-driven development.
-
-Every group receives its own variant of the service. The business rules, the limits and the faults differ from group to group, so another group's tests will not work on your variant.
-
 **AI tools are not allowed in this project.** Read the section "Academic integrity" before you start.
+
+
+The story
+---------
+
+Bistro is a restaurant chain that is about to replace its paper order slips with tablets. Waiters will open a table, add dishes, print the bill and take card payments through a new back end, the Bistro Order Service. An outside vendor wrote the service and delivered it as a Docker image, without the source code, together with a contract that lists the business rules it must follow.
+
+The chain does not want to rely on the vendor's own testing. Before the tablets go into the restaurants it has hired your group as an independent test team, and your results decide whether the chain accepts the delivery or sends it back. The managers want four things from you:
+
+1. Does the service follow the contract? For every rule it breaks, they want an automated test that shows the failure and a bug report the vendor can act on. This is the work of R1 and R2.
+2. Will it survive a Saturday evening with every table full? They want to know at what load it becomes too slow for the waiters, which request slows down as the day's orders pile up, and whether it runs out of memory over a long shift. This is R4.
+3. Is it safe, and what happens when something around it fails? Can one waiter read another waiter's orders, and what happens to a customer's payment when the card provider is slow or down? This is R5, who also keeps the team's CI running.
+4. The chain writes two small pieces itself: a bill splitter for tables that pay separately, and the client that talks to the card provider. Your team builds them with tests written first, and the chain will run its own acceptance tests on them before it uses them. This is R3.
+
+Every group gets its own copy of the vendor's delivery. The numbers in the contract (table limits, discount threshold, happy hour, kitchen capacity and so on) differ from group to group, and so do the faults in the delivery. Your variant card is your copy of the contract, and another group's results will not match yours.
 
 
 Key dates
@@ -22,10 +33,12 @@ All times are Turkey time (UTC+3).
 
    * - Date
      - What happens
+   * - Now
+     - The sign-up form on the course page is open. A group with a complete and correct entry gets its private repository and the invitations within about half an hour, so it can start right away (see "Signing up"). The repository is named after the group id, for example ``group-1-07``.
    * - Friday 20 November, 17:00
-     - Group sign-up closes. One member of each group fills in the sign-up form linked on the course page. Only the instructor sees the answers. A student without a complete and correct entry counts as not having taken the project (see "Signing up").
+     - Group sign-up closes. A student who is not in a group by then counts as not having taken the project.
    * - Monday 23 November
-     - Your private group repository is created with the starter files in it after the sign-up closes, at the latest on this day, and you receive an invitation by e-mail. Accept it within 48 hours. The repository is named after your group id, for example ``group-1-07``. The service image is published. If you have no invitation by 24 November, tell the instructor.
+     - The service images are published.
    * - Week of 23 November
      - Your variant card is handed out on paper in class.
    * - Sunday 29 November, 23:59
@@ -43,7 +56,7 @@ All times are Turkey time (UTC+3).
 First steps
 -----------
 
-1. Form a group of 4 or 5 students from your section. One member fills in the sign-up form on the course page; everybody checks their own student number and GitHub username in it before Friday 20 November, 17:00.
+1. Form a group of 4 or 5 students from your section. One member fills in the sign-up form on the course page, and everybody checks their own student number and GitHub username in it. The sooner the entry is correct, the sooner your repository arrives; the last moment is Friday 20 November, 17:00.
 2. Install Git, Python 3.12 (the version the CI uses) and Docker. On Windows and macOS this is Docker Desktop; on Windows it needs WSL 2. Turn off AI completion in your editor.
 3. Accept the invitation to your group repository within 48 hours. GitHub sends it to the e-mail address of your account, and you can also see it at https://github.com/cen315-cu.
 4. Clone the repository and make sure your commits are linked to your account (see "From group score to your score")::
@@ -70,29 +83,37 @@ Signing up
 
 One member of each group fills in the sign-up form on the course page by Friday 20 November, 17:00. The form asks for the section and, for each member, the student number and the GitHub username, written as ``2023555012 ayse-yilmaz``. The student number must be on the class list of your section, and the GitHub username must belong to an existing account that you use.
 
-Each student is responsible for their own entry, so check it with the member who sends the form. A student who is not in any entry, whose entry is incomplete or wrong, or who appears in more than one group is not placed in a group and counts as not having taken the project. Entries are not accepted after the deadline.
+The answers are checked every 15 minutes. As soon as an entry has at least four members whose student number and GitHub username are correct, the group gets its repository and every member gets an invitation by e-mail. Accept it within 48 hours. If a correct entry has brought no invitation after a few hours, check the entry with the edit link, and then ask the instructor.
+
+Once a group exists:
+
+- A member added to the entry later, with the edit link, is invited to the same repository, up to five members.
+- A student who is already in a group stays in it. Another entry that lists them is ignored for that student.
+- Removing a member or moving to another group goes through the instructor.
+
+Each student is responsible for their own entry, so check it with the member who sends the form. A line with a student number that is not on the class list of the section, an incomplete line or a wrong username is ignored. A student who is not in a group when the sign-up closes on Friday 20 November, 17:00, counts as not having taken the project. Entries are not accepted after the deadline.
 
 .. list-table::
    :header-rows: 1
    :widths: 8 37 55
 
    * - Role
-     - Owns
+     - Your job in the test team
      - Course topics
    * - R1
-     - Black-box functional tests of the service
+     - Functional tester. Checks every business rule from the outside with black-box tests and writes the decision table for the bill.
      - equivalence partitioning, boundary values, decision tables, state transitions
    * - R2
-     - Property-based and combinatorial tests
+     - Test designer. Finds the inputs and combinations nobody wrote by hand, with properties that must always hold and a pairwise set.
      - Hypothesis, pairwise testing
    * - R3
-     - The group's own module, built with TDD
+     - Developer. Builds the chain's own bill splitter and payment client with test-driven development.
      - unit testing, TDD, mocking, coverage, mutation testing
    * - R4
-     - Performance and reliability
+     - Performance engineer. Answers the Saturday-evening question: capacity, slow requests and memory over a long run.
      - load, spike and soak tests, percentiles, Little's Law, capacity
    * - R5
-     - Security, resilience and CI
+     - Security and reliability engineer. Looks for ways to misuse the service, breaks the card provider on purpose to see what the service does, and keeps the CI working.
      - threat modelling, OWASP ZAP, chaos experiments, CI pipeline
 
 Everyone writes code. Your role decides which part of the repository you are responsible for, and the written exam asks you most about that part. It also asks about one part that a teammate owns, so read each other's work.
