@@ -310,7 +310,7 @@ Running the tests::
 Black-box tests (R1)
 ~~~~~~~~~~~~~~~~~~~~
 
-Use the ``base_url`` and ``waiter_keys`` fixtures from ``tests/conftest.py``, never a hard-coded address, because the grader runs your tests against other copies of your variant on other ports. Each test must be independent: it creates the orders it needs and does not rely on the order in which tests run or on data left by another test.
+Use the ``base_url``, ``payments_url`` and ``waiter_keys`` fixtures from ``tests/conftest.py``, never a hard-coded address or key, because the grader runs your tests against other copies of your variant. Each test must be independent: it creates the orders it needs and does not rely on the order in which tests run or on data left by another test.
 
 Tests derived from the decision table use ``pytest.mark.parametrize`` with one ``pytest.param(..., id="<rule_id>")`` per row, where ``<rule_id>`` is the value in the ``rule_id`` column of ``docs/decision-table.csv``. The grader matches these ids.
 
@@ -388,7 +388,7 @@ The project grade is computed by scripts from the state of your repository at Sa
 How a fault counts as found
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Your variant contains ten seeded faults: functional, state, concurrency, security and resilience faults. For each fault the grader builds a copy of your variant in which only that fault is repaired. A fault counts as found when at least one of your black-box tests fails on your variant and passes on the copy where that fault is repaired. A test that fails on the fully correct service is a false alarm and costs points.
+Your variant contains ten seeded faults: functional, state, concurrency, security and resilience faults. For each fault the grader builds a copy of your variant in which only that fault is repaired. A fault counts as found when at least one of your black-box tests fails on your variant and passes on the copy where that fault is repaired. Black-box tests here are all the tests in ``tests/blackbox``, ``tests/property`` and ``tests/pairwise``. A test that fails on the fully correct service is a false alarm: it costs points and finds nothing. The grader runs your whole suite on each copy, and then runs single tests again on a freshly started service, so a test that only failed because of data left by another test is not held against you.
 
 Group score (100 points)
 ~~~~~~~~~~~~~~~~~~~~~~~~
