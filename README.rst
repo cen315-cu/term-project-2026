@@ -40,6 +40,26 @@ All times are Turkey time (UTC+3).
      - Oral exam, only for students who are called (see "Exam")
 
 
+First steps
+-----------
+
+1. Form a group of 4 or 5 students from your section. One member fills in the sign-up form on the course page; everybody checks their own student number and GitHub username in it before Friday 20 November, 17:00.
+2. Install Git, Python 3.12 (the version the CI uses) and Docker. On Windows and macOS this is Docker Desktop; on Windows it needs WSL 2. Turn off AI completion in your editor.
+3. Accept the invitation to your group repository within 48 hours. GitHub sends it to the e-mail address of your account, and you can also see it at https://github.com/cen315-cu.
+4. Clone the repository and make sure your commits are linked to your account (see "From group score to your score")::
+
+       git clone https://github.com/cen315-cu/group-1-07.git
+       cd group-1-07
+       git config user.email "the e-mail address of your GitHub account"
+
+5. Agree on the roles. Each member commits their own row of ``docs/roles.csv`` (see "Choosing roles").
+6. Until the service image and your variant card arrive in the week of 23 November, ``docker compose up`` will not work yet. Use those days to read the business rules and start the test plan together. R3 can start the tests of the own module, R1 the decision table for rule 5, R2 the list of parameters for pairwise testing, R4 can install k6 or Locust and R5 OWASP ZAP.
+7. When you have the card, copy ``.env.example`` to ``.env``, fill in the values, start the service (see "Starting the service") and run ``pytest tests/blackbox/test_health.py``.
+8. Checkpoint 1 is on Sunday 29 November, 23:59: every member's row in ``docs/roles.csv``, ``docs/test-plan.pdf``, and at least one passing test pushed by every member.
+
+Everyone pushes to the same ``main`` branch, so run ``git pull --rebase`` before ``git push`` to avoid overwriting each other's work. Force pushes to ``main`` are blocked. Only the state of ``main`` at 23:59 on 12 December is graded; other branches are ignored.
+
+
 Groups and roles
 ----------------
 
@@ -217,8 +237,10 @@ Your group repository is created with these starter files. Keep this layout, bec
 Starting the service
 ~~~~~~~~~~~~~~~~~~~~
 
+The service images are published on Monday 23 November. Before that date ``docker compose up`` reports that the images cannot be found.
+
 1. Install Docker Desktop (Windows, macOS) or Docker Engine (Linux).
-2. Copy ``.env.example`` to ``.env`` and fill in the values from your variant card.
+2. Copy ``.env.example`` to ``.env`` and fill in the values from your variant card. Never commit ``.env``; it is already in ``.gitignore``.
 3. Run ``docker compose up -d``. The order service answers on http://localhost:8080 and the payment provider on http://localhost:8081.
 4. Check it with ``curl http://localhost:8080/health``.
 
@@ -418,7 +440,7 @@ Other rules
 1. Keep your group repository private. Do not fork it, copy it to a public place, or share its contents with other groups.
 2. Do not share your variant card or your variant key. Do not run another group's variant.
 3. Every member commits their own work from their own GitHub account. Do not commit on behalf of a teammate.
-4. Do not rewrite the history of the ``main`` branch. Every push, including force pushes, is recorded by GitHub.
+4. Do not rewrite the history of the ``main`` branch. Force pushes to ``main`` and deleting it are blocked, and every push is recorded by GitHub.
 5. Do not attack the infrastructure of the course or other groups. Security testing is allowed only against your own variant running on your own computer.
 
 Suspected violations are handled under Çukurova University's regulations on academic misconduct and student discipline. The instructor may call any student to an oral exam on the project, and the result of that exam replaces the written exam score.
