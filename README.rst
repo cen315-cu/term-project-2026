@@ -34,13 +34,9 @@ All times are Turkey time (UTC+3).
    * - Date
      - What happens
    * - Now
-     - The sign-up form on the course page is open. A group with a complete and correct entry gets its private repository and the invitations within about half an hour, so it can start right away (see "Signing up"). The repository is named after the group id, for example ``group-1-07``.
+     - The sign-up form on the course page is open and the service images are published. A group with a complete and correct entry gets its private repository, the invitations and its variant card within about half an hour, so it can start right away (see "Signing up"). The repository is named after the group id, for example ``group-1-07``, and the card is the issue "Your variant card" in it.
    * - Friday 20 November, 17:00
      - Group sign-up closes. A student who is not in a group by then counts as not having taken the project.
-   * - Monday 23 November
-     - The service images are published.
-   * - Week of 23 November
-     - Your variant card is handed out on paper in class. Bring your student ID card: each member's identity is checked against the group list.
    * - Sunday 29 November, 23:59
      - Checkpoint 1. Roles are fixed from this point on.
    * - Sunday 6 December, 23:59
@@ -66,8 +62,8 @@ First steps
        git config user.email "the e-mail address of your GitHub account"
 
 5. Agree on the roles. Each member commits their own row of ``docs/roles.csv`` (see "Choosing roles").
-6. Until the service image and your variant card arrive in the week of 23 November, ``docker compose up`` will not work yet. Use those days to read the business rules and start the test plan together. R3 can start the tests of the own module, R1 the decision table for rule 5, R2 the list of parameters for pairwise testing, R4 can install k6 or Locust and R5 OWASP ZAP.
-7. When you have the card, copy ``.env.example`` to ``.env``, fill in the values, start the service (see "Starting the service") and run ``pytest tests/blackbox/test_health.py``.
+6. Open the issue "Your variant card" in your repository. Copy ``.env.example`` to ``.env``, fill in the values from the card, start the service (see "Starting the service") and run ``pytest tests/blackbox/test_health.py``.
+7. Read the business rules together and start the test plan. R3 can start the tests of the own module, R1 the decision table for rule 5, R2 the list of parameters for pairwise testing, R4 can install k6 or Locust and R5 OWASP ZAP.
 8. Checkpoint 1 is on Sunday 29 November, 23:59: every member's row in ``docs/roles.csv``, ``docs/test-plan.pdf``, and at least one passing test pushed by every member.
 
 Everyone pushes to the same ``main`` branch, so run ``git pull --rebase`` before ``git push`` to avoid overwriting each other's work. Force pushes to ``main`` are blocked. Only the state of ``main`` at 23:59 on 12 December is graded; other branches are ignored.
@@ -83,7 +79,9 @@ Signing up
 
 One member of each group fills in the sign-up form on the course page by Friday 20 November, 17:00. The form asks for the section and, for each member, the student number and the GitHub username, written as ``2023555012 ayse-yilmaz``. The student number must be on the class list of your section, and the GitHub username must belong to an existing account that you use.
 
-The answers are checked every 15 minutes. As soon as an entry has at least four members whose student number and GitHub username are correct, the group gets its repository and every member gets an invitation by e-mail. Accept it within 48 hours. If a correct entry has brought no invitation after a few hours, check the entry with the edit link, and then ask the instructor.
+The answers are checked every 15 minutes. As soon as an entry has at least four members whose student number and GitHub username are correct, the group gets its repository and every member gets an invitation by e-mail. Accept it within 48 hours. The GitHub username must belong to an existing account; a line with a username that GitHub does not know is not accepted.
+
+The form also asks for the e-mail address of the member who sends it. That address gets a copy of the entry with its edit link, and an e-mail listing any line that was not accepted and why. Correct the line with the edit link; the next check, within 15 minutes, takes the correction. This also works for a member who is already in a group but was entered with a username that has no GitHub account. If a correct entry has brought no invitation after a few hours, check the entry with the edit link, and then ask the instructor.
 
 Once a group exists:
 
@@ -91,7 +89,7 @@ Once a group exists:
 - A student who is already in a group stays in it. Another entry that lists them is ignored for that student.
 - Removing a member or moving to another group goes through the instructor.
 
-List only students who have agreed to be in your group, with their own GitHub accounts. Writing in another student's number, or a GitHub account that is not theirs, is academic misconduct. If your number was used without your consent, write to the instructor at once: you are moved to the right group and the entry is handled under the misconduct rules. When the variant cards are handed out in class, every member shows their student ID card and is checked against the group list.
+List only students who have agreed to be in your group, with their own GitHub accounts. Writing in another student's number, or a GitHub account that is not theirs, is academic misconduct. If your number was used without your consent, write to the instructor at once: you are moved to the right group and the entry is handled under the misconduct rules. At the written exam every student's identity is checked against the group list.
 
 Each student is responsible for their own entry, so check it with the member who sends the form. A line with a student number that is not on the class list of the section, an incomplete line or a wrong username is ignored. A student who is not in a group when the sign-up closes on Friday 20 November, 17:00, counts as not having taken the project. Entries are not accepted after the deadline.
 
@@ -292,10 +290,10 @@ Your group repository is created with these starter files. Keep this layout, bec
 Starting the service
 ~~~~~~~~~~~~~~~~~~~~
 
-The service images are published on Monday 23 November. Before that date ``docker compose up`` reports that the images cannot be found.
+The service images are published on ghcr.io and can be pulled without logging in. They run on Windows, Linux and macOS, including Apple Silicon.
 
 1. Install Docker Desktop (Windows, macOS) or Docker Engine (Linux).
-2. Copy ``.env.example`` to ``.env`` and fill in the values from your variant card. Never commit ``.env``; it is already in ``.gitignore``.
+2. Copy ``.env.example`` to ``.env`` and fill in the values from your variant card (the issue "Your variant card" in your repository). Never commit ``.env``; it is already in ``.gitignore``.
 3. Run ``docker compose up -d``. The order service answers on http://localhost:8080 and the payment provider on http://localhost:8081.
 4. Check it with ``curl http://localhost:8080/health``.
 
@@ -453,10 +451,10 @@ Personal data
 No list of names, student numbers or grades is published at any point of this project, on GitHub or anywhere else.
 
 What is collected
-   The sign-up form asks for the section and, for each member, the student number and the GitHub username. Your group repository holds what you push to it. The grading scripts and the exam produce your scores. Nothing else is collected.
+   The sign-up form asks for the section, for each member the student number and the GitHub username, and the e-mail address of the member who sends it. That address is used only to send the copy of the entry and the messages about lines that were not accepted. Your group repository holds what you push to it. The grading scripts and the exam produce your scores. Nothing else is collected.
 
 What it is used for
-   Forming the groups, giving you access to your repository, grading the project, generating your exam paper and entering your grade.
+   Forming the groups, giving you access to your repository and your variant card, grading the project, generating your exam paper and entering your grade.
 
 Who sees it
    Only the instructor sees the sign-up answers, the scores and the link between GitHub usernames and student numbers. Your group repository is private: the members of your group and the instructor can see it, nobody else. Each student is added to their own group repository only, not to the GitHub organization, so nobody can see another group's repository or a list of the other students.
