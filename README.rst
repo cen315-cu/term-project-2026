@@ -491,7 +491,7 @@ Other rules
 ~~~~~~~~~~~
 
 1. Keep your group repository private. Do not fork it, copy it to a public place, or share its contents with other groups.
-2. Do not share your variant card or your variant key. Do not run another group's variant.
+2. Do not share your variant card or your variant key. Do not run another group's variant. The issue "Your variant card" stays open: if it is closed or edited, it is put back as it was within 15 minutes.
 3. Every member commits their own work from their own GitHub account. Do not commit on behalf of a teammate.
 4. Do not rewrite the history of the ``main`` branch. Force pushes to ``main`` and deleting it are blocked, and every push is recorded by GitHub.
 5. Do not attack the infrastructure of the course or other groups. Security testing is allowed only against your own variant running on your own computer.
