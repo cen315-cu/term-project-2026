@@ -372,6 +372,12 @@ The modes are ``normal`` (answers at once), ``slow`` (waits ``delay_ms`` millise
 
 The CI workflow in the starter files runs only the unit tests. Keep it working.
 
+.. list-table::
+   :header-rows: 1
+
+   * - Note
+   * - Security and resilience tests go in ``tests/blackbox`` too, because the grader looks for faults only with the tests in ``tests/blackbox``, ``tests/property`` and ``tests/pairwise``. Put them in a file of your own, for example ``tests/blackbox/test_security.py``. Any file whose name starts with ``test_`` is collected. Leave ``tests/blackbox/test_health.py`` as it is; it only checks that the service is running.
+
 Bug reports
 ~~~~~~~~~~~
 
