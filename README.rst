@@ -230,6 +230,7 @@ The names in capitals are parameters. Their values for your group are printed on
 6. The kitchen can work on at most KITCHEN_SLOTS open orders that contain a main course. Adding a main course to one more order is refused with status 429. An order frees its slot when it is paid or cancelled, or when its last main course is removed.
 7. A card payment goes to the payment provider. If the provider does not answer within PAY_TIMEOUT_MS or answers with an error, the order stays OPEN and the service answers 503. A payment repeated with the same idempotency key must never charge the customer twice: after a successful payment the same request returns the same payment with status 200. While a card payment of an order is in progress, the order cannot be changed, cancelled or paid again.
 8. Invalid input gets a 4xx status with a JSON error message, never a 5xx status and never a stack trace.
+9. A waiter sees and changes only the orders they opened; for any other waiter such an order is unknown (404). A request without a known ``X-Waiter-Key`` is refused with 401, except ``GET /menu`` and ``GET /health``.
 
 
 Your repository
